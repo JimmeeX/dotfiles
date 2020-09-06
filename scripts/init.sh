@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Load Background
+~/scripts/.fehbg
+
 # Prevent Auto-sleep (after approx 10 minutes by default)
 xset s off
 xset -dpms

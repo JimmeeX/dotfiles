@@ -569,7 +569,8 @@ beautiful.useless_gap = 5;
 beautiful.gap_single_client = true;
 
 -- Autostart Apps && Scripts
-awful.spawn.with_shell("ckb-next --background")
+awful.spawn.with_shell("ckb-next --background");
+awful.spawn.with_shell("picom --config $HOME/.config/picom/picom.conf");
 awful.util.spawn("albert");
-awful.spawn.with_shell("~/scripts/.fehbg");
+
 awful.spawn.with_shell("~/scripts/init.sh");
