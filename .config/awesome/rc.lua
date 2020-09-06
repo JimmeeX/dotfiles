@@ -571,4 +571,4 @@ beautiful.gap_single_client = true;
 -- Autostart Apps && Scripts
 awful.util.spawn("albert")
 awful.spawn.with_shell("~/scripts/.fehbg")
-awful.spawn.with_shell("~/scripts/disable-sleep.sh")
+awful.spawn.with_shell("~/scripts/init.sh")

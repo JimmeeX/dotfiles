@@ -102,3 +102,4 @@ export LC_ALL=en_AU.UTF-8
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/github/.dotfiles/ --work-tree=$HOME"
+alias open="xdg-open"
