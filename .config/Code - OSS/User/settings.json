@@ -1,0 +1,8 @@
+{
+    "window.zoomLevel": 0,
+    "window.menuBarVisibility": "toggle",
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontFamily": "MesloLGS NF",
+    "terminal.integrated.fontSize": 16,
+}
