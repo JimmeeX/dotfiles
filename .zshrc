@@ -95,6 +95,10 @@ export EDITOR='code'
 # Open
 alias zshconfig="code ~/.zshrc"
 alias ohmyzsh="code ~/.oh-my-zsh"
+alias awesomeconfig="code ~/.config/awesome/rc.lua"
+alias kittyconfig="code ~/.config/kitty/kitty.conf"
+alias kittycolorsconfig="code ~/.config/kitty/colors.conf"
+alias picomconfig="code ~/.config/picom/picom.conf"
 alias open="xdg-open"
 
 # Changing "ls" to "exa"
