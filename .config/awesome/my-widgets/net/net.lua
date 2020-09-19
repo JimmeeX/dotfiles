@@ -17,6 +17,11 @@ local gears = require("gears")
 
 local interface = 'enp0s31f6'
 
+local graph_tx_max = 40000000       -- Mb/s
+local graph_rx_max = 100000000      -- Mb/s
+local graph_padding = 0.01          -- %
+local graph_bg = '#2C2F5D'
+
 local prev_time = os.clock()
 local prev_rx = 0
 local prev_tx = 0
@@ -68,19 +73,22 @@ local function network_details()
     -- ip address
 
     local network_details_widget = wibox.widget {
-        id = 'ip_address',
+        id = 'network_details',
         widget = wibox.widget.textbox,
-        set_ip_text = function(self, new_ip_addr)
-            self:get_children_by_id('ip_address')[1]:set_text(tostring(new_ip_addr))
+        set_details_text = function(self, new_details)
+            self:get_children_by_id('network_details')[1]:set_text(tostring(new_details))
         end
     }
 
     local update_widget = function(widget, stdout, stderr)
         -- Get IP Address
-        local ip_addresses = split(stdout, '\r\n')
-        widget:set_ip_text("IP \t" .. ip_addresses[1])
+        local ip_address = split(stdout, '\r\n')[1]
+        local text =
+            "IP Address\t" .. ip_address .. "\n" ..
+            "Interface \t" .. interface
+        widget:set_details_text(text)
     end
-    -- [[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]]
+
     local cmd = [[bash -c "ifconfig enp0s31f6 | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b'"]]
     watch(cmd, 5, update_widget, network_details_widget)
 
@@ -115,6 +123,62 @@ local function network_speed()
         end
     }
 
+    local network_hist_tx_widget = wibox.widget {
+        --     local network_history_up = wibox.widget {
+        max_value = graph_tx_max + graph_tx_max*graph_padding, -- 40 Mb/s
+        -- background_color = beautiful.bg_normal,
+        background_color = graph_bg,
+        -- forced_width = 100,
+        forced_height = 50,
+        step_width = 2,
+        step_spacing = 1,
+        color = '#FF16B0',
+        widget = wibox.widget.graph
+    }
+
+    local network_hist_rx_widget = wibox.widget {
+        --     local network_history_up = wibox.widget {
+        max_value = graph_rx_max + graph_rx_max*graph_padding, -- 100 Mb/s
+        -- background_color = beautiful.bg_normal,
+        background_color = graph_bg,
+        -- forced_width = 100,
+        forced_height = 50,
+        step_width = 2,
+        step_spacing = 1,
+        color = '#46BDFF',
+        widget = wibox.widget.graph
+    }
+
+    local network_history_widget = wibox.widget {
+        {
+            {
+                {
+                    -- Mirrored so graph starts on right
+                    network_hist_tx_widget,
+                    reflection = { horizontal = true },
+                    widget = wibox.container.mirror
+                },
+                -- top = 10,
+                bottom = 1,
+                widget = wibox.container.margin
+            },
+            {
+                {
+                    -- Mirrored so graph starts on right and is facing downwards
+                    network_hist_rx_widget,
+                    direction = 'south',
+                    widget = wibox.container.rotate
+                },
+                top = 1,
+                -- bottom = 10,
+                widget = wibox.container.margin
+            },
+            layout = wibox.layout.fixed.vertical
+        },
+        bg = graph_bg,
+        widget = wibox.container.background
+    }
+
     local update_widget = function(widget, stdout, stderr)
 
         local curr_time = os.clock()
@@ -135,6 +199,9 @@ local function network_speed()
         widget:set_rx_text(convert_to_h(speed_rx))
         widget:set_tx_text(convert_to_h(speed_tx))
 
+        network_hist_rx_widget:add_value(speed_rx*8 + graph_rx_max*graph_padding)
+        network_hist_tx_widget:add_value(speed_tx*8 + graph_tx_max*graph_padding)
+
         prev_time = curr_time
         prev_rx = cur_rx
         prev_tx = cur_tx
@@ -142,9 +209,8 @@ local function network_speed()
 
     watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], interface), 1, update_widget, network_speed_widget)
 
-    return network_speed_widget
+    return network_speed_widget, network_history_widget
 end
-
 
 local function create_popupsection(section_title, section_content)
     return wibox.widget {
@@ -169,10 +235,12 @@ local function create_popupsection(section_title, section_content)
                     widget = wibox.container.background
                 },
                 -- Section Content
-                section_content,
-                expand = true,
-                homogeneous = true,
-                layout = wibox.layout.grid.vertical
+                {
+                    section_content,
+                    top = 10,
+                    widget = wibox.container.margin,
+                },
+                layout = wibox.layout.fixed.vertical
             },
             -- bg = '#FF00FF',
             widget = wibox.container.background
@@ -181,6 +249,8 @@ local function create_popupsection(section_title, section_content)
         widget = wibox.container.margin,
     }
 end
+
+local network_speed_widget, network_history_widget = network_speed()
 
 local popup = awful.popup{
     ontop = true,
@@ -194,11 +264,11 @@ local popup = awful.popup{
     widget = {
         {
             create_popupsection('NETWORK', network_details()),
-            create_popupsection('GRAPH', nil),
+            create_popupsection('GRAPH', network_history_widget),
             create_popupsection('PROCESSES', nil),
-            expand = true,
-            homogeneous = true,
-            layout = wibox.layout.grid.vertical
+            -- expand = true,
+            -- homogeneous = true,
+            layout = wibox.layout.fixed.vertical
         },
         bg = beautiful.bg_normal,
         widget = wibox.container.background,
@@ -207,7 +277,7 @@ local popup = awful.popup{
 
 
 local net_speed_widget = wibox.widget {
-    network_speed(),
+    network_speed_widget,
     widget = wibox.container.background,
 }
 
