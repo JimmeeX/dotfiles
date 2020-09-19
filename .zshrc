@@ -79,6 +79,7 @@ source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # User configuration
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=53'
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -86,6 +87,10 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 export LANG=en_AU.UTF-8
 export LC_ALL=en_AU.UTF-8
 export EDITOR='code'
+
+export PATH=$PATH:/home/$USER/.local/bin
+
+export INTERFACE='enp0s31f6'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -95,7 +100,7 @@ export EDITOR='code'
 # Open
 alias zshconfig="code ~/.zshrc"
 alias ohmyzsh="code ~/.oh-my-zsh"
-alias awesomeconfig="code ~/.config/awesome/rc.lua"
+alias awesomeconfig="code ~/.config/awesome"
 alias kittyconfig="code ~/.config/kitty/kitty.conf"
 alias kittycolorsconfig="code ~/.config/kitty/colors.conf"
 alias picomconfig="code ~/.config/picom/picom.conf"
