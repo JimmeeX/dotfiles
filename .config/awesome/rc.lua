@@ -136,32 +136,8 @@ local cpu_widget    = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 -- local my_cpu_widget = require("my-widgets.cpu.cpu")
 local ram_widget    = require("awesome-wm-widgets.ram-widget.ram-widget")
 
--- ### Widgets ###
--- MEM
--- local memicon = wibox.widget.imagebox(theme.widget_mem)
--- local memory = lain.widget.mem({
---     settings = function()
---         widget:set_markup(markup.fontfg(theme.font, "#e0da37", mem_now.used .. "M "))
---     end
--- })
-
--- -- Net
--- local netdownicon = wibox.widget.imagebox(icon.widget_netdown)
--- local netdowninfo = wibox.widget.textbox()
--- local netupicon = wibox.widget.imagebox(icon.widget_netup)
--- local netupinfo = lain.widget.net({
---     settings = function()
---         -- if iface ~= "network off" and
---         --    string.match(theme.weather.widget.text, "N/A")
---         -- then
---         --     theme.weather.update()
---         -- end
-
---         widget:set_markup(markup.fontfg(theme.font, "#e54c62", net_now.sent .. " KB"))
---         netdowninfo:set_markup(markup.fontfg(theme.font, "#87af5f", net_now.received .. " KB"))
---     end
--- })
-
+local volume_control = require("my-widgets.volume.volume")
+local volume_cfg = volume_control({})
 
 
 -- Create a wibox for each screen and add it
@@ -276,6 +252,17 @@ awful.screen.connect_for_each_screen(function(s)
                 color='#FF16B0',
                 enable_kill_button=true
             }),
+            volume_cfg.widget,
+            -- volume_control({
+            --     main_color = '#af13f7',
+            --     mute_color = '#ff0000',
+            --     thickness = 5,
+            --     height = 25,
+            --     button_press = function(_, _, _, button)   -- Overwrites the button press behaviour to open pavucontrol when clicked
+            --         if (button == 1) then awful.spawn('pavucontrol --tab=3', false)
+            --         end
+            --     end
+            -- }),
             -- mykeyboardlayout,
             -- wibox.widget.systray(),
             mytextclock,
@@ -392,6 +379,25 @@ globalkeys = gears.table.join(
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
         {description = "show the menubar", group = "launcher"}
+    ),
+    -- Volume Control
+    awful.key({  }, "XF86AudioRaiseVolume",
+        function()
+            awful.spawn.with_shell("/usr/bin/amixer set Master 5%+")
+            volume_cfg:up()
+        end
+    ),
+    awful.key({  }, "XF86AudioLowerVolume",
+        function()
+            awful.spawn.with_shell("/usr/bin/amixer set Master 5%-")
+            volume_cfg:down()
+        end
+    ),
+    awful.key({  }, "XF86AudioMute",
+        function()
+            awful.spawn.with_shell("/usr/bin/amixer set Master toggle")
+            volume_cfg:toggle()
+        end
     )
 )
 

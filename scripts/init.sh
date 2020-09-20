@@ -9,4 +9,4 @@ xset -dpms
 xset s noblank
 
 # Initialise Keybindings (based on .xbindkeysrc)
-xbindkeys
+# xbindkeys
