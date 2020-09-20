@@ -90,7 +90,7 @@ local function network_details()
     end
 
     local cmd = [[bash -c "ifconfig enp0s31f6 | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b'"]]
-    watch(cmd, 5, update_widget, network_details_widget)
+    watch(cmd, 100, update_widget, network_details_widget)
 
     return network_details_widget
 end
@@ -207,7 +207,7 @@ local function network_speed()
         prev_tx = cur_tx
     end
 
-    watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], interface), 1, update_widget, network_speed_widget)
+    watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], interface), 3, update_widget, network_speed_widget)
 
     return network_speed_widget, network_history_widget
 end
