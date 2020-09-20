@@ -265,7 +265,7 @@ local popup = awful.popup{
         {
             create_popupsection('NETWORK', network_details()),
             create_popupsection('GRAPH', network_history_widget),
-            create_popupsection('PROCESSES', nil),
+            -- create_popupsection('PROCESSES', nil),
             -- expand = true,
             -- homogeneous = true,
             layout = wibox.layout.fixed.vertical
