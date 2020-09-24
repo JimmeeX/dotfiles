@@ -101,15 +101,15 @@ local function network_speed()
         {
             id = 'tx_speed',
             align = 'center',
-            font = beautiful.font_net,
+            font = beautiful.font_small,
             widget = wibox.widget.textbox
         },
         -- Down Speed Textbox
         {
             id = 'rx_speed',
             align = 'center',
+            font = beautiful.font_small,
             widget = wibox.widget.textbox,
-            font = beautiful.font_net,
         },
         id = 'net_speed',
         expand = true,
