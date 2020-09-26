@@ -101,7 +101,7 @@ function storage_widget:create_widget(args)
     self.primary_progress = wibox.widget {
         max_value     = 100,
         -- value         = 8,
-        color         = beautiful.fg_normal,
+        color         = beautiful.progress_vertbar,
         background_color = '#2C2F5D',
         widget        = wibox.widget.progressbar,
     }
@@ -210,7 +210,7 @@ function storage_widget:create_storagesection()
         local drive_header_widget = wibox.widget {
             {
                 markup = '<b>' .. drive ..'</b> [' .. model .. ']',
-                font = beautiful.font_storage,
+                font = beautiful.font_small,
                 align = 'center',
                 widget = wibox.widget.textbox
             },
@@ -257,7 +257,7 @@ end
 function storage_widget:create_drivebarwidget(name_info, value, perc_info)
     local partition_info_widget = wibox.widget {
         markup = name_info,
-        font = beautiful.font_storage,
+        font = beautiful.font_small,
         widget = wibox.widget.textbox
     }
 
@@ -274,7 +274,7 @@ function storage_widget:create_drivebarwidget(name_info, value, perc_info)
     local partition_perc_widget = wibox.widget {
         markup = perc_info,
         align = 'right',
-        font = beautiful.font_storage,
+        font = beautiful.font_small,
         widget = wibox.widget.textbox
     }
 

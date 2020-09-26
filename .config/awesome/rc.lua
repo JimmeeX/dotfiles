@@ -134,6 +134,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mytextclock = wibox.widget.textclock()
 local my_net_widget = require("my-widgets.net.net")
 -- local cpu_widget    = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+local mem_widget    = require("my-widgets.mem.mem")({})
 local cpu_widget    = require("my-widgets.cpu.cpu")({})
 local ram_widget    = require("awesome-wm-widgets.ram-widget.ram-widget")
 
@@ -249,6 +250,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             my_net_widget(),
             ram_widget(),
+            mem_widget.widget,
             -- cpu_label,
             -- cpu_widget({
             --     width=50,
@@ -637,7 +639,7 @@ beautiful.useless_gap = 5;
 beautiful.gap_single_client = true;
 
 -- Autostart Apps && Scripts
-awful.spawn.with_shell("ckb-next --background");
+-- awful.spawn.with_shell("ckb-next --background");
 awful.spawn.with_shell("picom --config $HOME/.config/picom/picom.conf");
 awful.util.spawn("albert");
 
