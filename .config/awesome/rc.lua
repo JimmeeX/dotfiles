@@ -132,11 +132,10 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-local my_net_widget = require("my-widgets.net.net")
--- local cpu_widget    = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+local net_widget    = require("my-widgets.net.net")
 local mem_widget    = require("my-widgets.mem.mem")({})
 local cpu_widget    = require("my-widgets.cpu.cpu")({})
-local ram_widget    = require("awesome-wm-widgets.ram-widget.ram-widget")
+local gpu_widget    = require("my-widgets.gpu.gpu")({})
 
 -- Volume Widget
 local volume_control = require("my-widgets.volume.volume")
@@ -248,8 +247,8 @@ awful.screen.connect_for_each_screen(function(s)
         -- s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            my_net_widget(),
-            ram_widget(),
+            net_widget(),
+            gpu_widget.widget,
             mem_widget.widget,
             -- cpu_label,
             -- cpu_widget({

@@ -205,8 +205,8 @@ function mem_widget:create_widget_popup(args)
         visible = false,
         shape = gears.shape.rounded_rect,
         border_color = beautiful.bg_normal,
-        minimum_width = 400,
-        maximum_width = 400,
+        minimum_width = 350,
+        maximum_width = 350,
         offset = { y = 5 },
         widget = {
             {
@@ -305,8 +305,8 @@ function mem_widget:create_widget_mem_subsection()
         }
 
         mem_row_layout:add_widget_at(mem_info_widget, 1, 1, 1, 1)
-        mem_row_layout:add_widget_at(mem_bar_widget, 1, 2, 1, 3)
-        mem_row_layout:add_widget_at(mem_perc_widget, 2, 2, 1, 3)
+        mem_row_layout:add_widget_at(mem_bar_widget, 1, 2, 1, 5)
+        mem_row_layout:add_widget_at(mem_perc_widget, 2, 2, 1, 5)
 
         return wibox.widget {
             mem_row_layout,
@@ -448,7 +448,7 @@ function mem_widget:update_widget(widget, stdout, stderr)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['used'].markup = 'Used [' .. math.floor(used_perc*100+0.5) .. '%]'
 
                 self.mem_info_widget[self.mem_labels[mem_num]]['perc'].markup =
-                    'Available:\t' .. available .. 'M/' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
+                    'Available:\t' .. available .. 'M / ' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
 
                 -- Update Graph
                 self.mem_graph_widget:add_value(used_perc + self.graph_max*self.graph_padding)
@@ -472,7 +472,7 @@ function mem_widget:update_widget(widget, stdout, stderr)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['cache'].markup = 'Buff/Cache [' .. math.floor(buff_cache_perc*100+0.5) .. '%]'
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['used'].markup = 'Used [' .. math.floor(used_perc*100+0.5) .. '%]'
                 self.mem_info_widget[self.mem_labels[mem_num]]['perc'].markup =
-                    'Available:\t' .. free .. 'M/' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
+                    'Available:\t' .. free .. 'M / ' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
             end
 
             mem_num = mem_num + 1

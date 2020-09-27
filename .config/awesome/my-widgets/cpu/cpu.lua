@@ -190,8 +190,8 @@ function cpu_widget:create_widget_popup(args)
         visible = false,
         shape = gears.shape.rounded_rect,
         border_color = beautiful.bg_normal,
-        minimum_width = 200,
-        maximum_width = 400,
+        minimum_width = 350,
+        maximum_width = 350,
         offset = { y = 5 },
         widget = {
             {
