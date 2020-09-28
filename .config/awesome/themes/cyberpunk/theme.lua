@@ -16,7 +16,7 @@ theme.font_small    = "MesloLGS NF 9"
 theme.font_vsmall   = "MesloLGS NF 7"
 
 theme.progress_vertbar = {type="linear", from = {0, 0}, to = {20, 0}, stops = { {0, "#46BDFF"}, {1.0, '#FF407B'} } }
-theme.progress_bar  = {type="linear", from = {0, 0}, to = {0, 20}, stops = { {0, "#46BDFF"}, {1.0, '#FF407B'} } }
+theme.progress_bar  = {type="linear", from = {0, 0}, to = {200, 0}, stops = { {0, "#46BDFF"}, {1.0, '#FF407B'} } }
 theme.graph         = {type="linear", from = {0, 0}, to = {0, 20}, stops = { {0, "#FF407B"}, {1.0, '#46BDFF'} } }
 
 theme.bg_normal     = "#0d0f31"

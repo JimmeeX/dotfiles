@@ -181,7 +181,7 @@ function mem_widget:init(args)
     -- Widget References
     self.widget_display_bar = nil   -- Reference to Progress Bars
     self.mem_info_widget = {}       -- Reference to popup memory info
-    self.mem_graph_widget = nil     -- Reference to popup graph
+    self.mem_graph_widget = {}      -- Reference to popup graph
     self.mem_processes_widget = {}  -- Reference to popup processes
 
     self:create_widget_popup(args)
@@ -197,9 +197,6 @@ function mem_widget:create_widget_popup(args)
     -- Graph
         -- Available / Total %
     -- Processes (Top 10) sorted by memory
-    local graph_container, mem_graph_widget = self:create_widget_graph_subsection()
-    self.mem_graph_widget = mem_graph_widget
-
     self.widget_popup = awful.popup{
         ontop = true,
         visible = false,
@@ -211,7 +208,7 @@ function mem_widget:create_widget_popup(args)
         widget = {
             {
                 create_popupsection('MEMORY', self:create_widget_mem_subsection()),
-                create_popupsection('GRAPH', graph_container),
+                create_popupsection('GRAPH', self:create_widget_graph_subsection()),
                 create_popupsection('PROCESSES', self:create_widget_process_subsection()),
                 layout = wibox.layout.fixed.vertical
             },
@@ -249,17 +246,11 @@ function mem_widget:create_widget_display(args)
         widget = wibox.container.margin
     }
 
-    self.widget:buttons(
-        awful.util.table.join(
-            awful.button({}, 1, function()
-                if self.widget_popup.visible then
-                    self.widget_popup.visible = not self.widget_popup.visible
-                else
-                    self.widget_popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end)
-        )
-    )
+    self.widget:connect_signal("mouse::enter", function(c)
+        self.widget_popup:move_next_to(mouse.current_widget_geometry)
+        self.widget_popup.visible = true
+    end)
+    self.widget:connect_signal("mouse::leave", function(c) self.widget_popup.visible = false end)
 end
 
 function mem_widget:create_widget_mem_subsection()
@@ -334,13 +325,10 @@ function mem_widget:create_widget_mem_subsection()
 end
 
 function mem_widget:create_widget_graph_subsection()
-    -- Total Cpu
-    local mem_graph_widget = wibox.widget {
-        --     local network_history_up = wibox.widget {
-        max_value = self.graph_max + self.graph_max*self.graph_padding, -- 40 Mb/s
-        -- background_color = beautiful.bg_normal,
+    -- Total MEM
+    self.mem_graph_widget['graph'] = wibox.widget {
+        max_value = self.graph_max + self.graph_max*self.graph_padding,
         background_color = beautiful.bg_focus,
-        -- forced_width = 100,
         forced_height = 50,
         step_width = 2,
         step_spacing = 1.5,
@@ -348,16 +336,30 @@ function mem_widget:create_widget_graph_subsection()
         widget = wibox.widget.graph
     }
 
+    self.mem_graph_widget['subtext'] = wibox.widget {
+        align = 'left',
+        font = beautiful.font_small,
+        widget = wibox.widget.textbox
+    }
+
     return wibox.widget {
         {
-            -- Mirrored so graph starts on right
-            mem_graph_widget,
-            reflection = { horizontal = true },
-            widget = wibox.container.mirror
+            {
+                -- Mirrored so graph starts on right
+                self.mem_graph_widget['graph'],
+                reflection = { horizontal = true },
+                widget = wibox.container.mirror
+            },
+            bg = beautiful.bg_focus,
+            widget = wibox.container.background
         },
-        bg = beautiful.bg_focus,
-        widget = wibox.container.background
-    }, mem_graph_widget
+        {
+            self.mem_graph_widget['subtext'],
+            top = 5,
+            widget = wibox.container.margin
+        },
+        layout = wibox.layout.fixed.vertical
+    }
 end
 
 function mem_widget:create_widget_process_subsection()
@@ -448,10 +450,11 @@ function mem_widget:update_widget(widget, stdout, stderr)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['used'].markup = 'Used [' .. math.floor(used_perc*100+0.5) .. '%]'
 
                 self.mem_info_widget[self.mem_labels[mem_num]]['perc'].markup =
-                    'Available:\t' .. available .. 'M / ' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
+                    '(' .. used .. ' + ' .. buff_cache .. ')M / ' .. total .. 'M [' .. math.floor((used_perc+buff_cache_perc)*100+0.5) .. '%]'
 
                 -- Update Graph
-                self.mem_graph_widget:add_value(used_perc + self.graph_max*self.graph_padding)
+                self.mem_graph_widget['graph']:add_value(used_perc + self.graph_max*self.graph_padding)
+                self.mem_graph_widget['subtext'].markup = 'Used: ' .. used .. 'M / ' .. total .. 'M [' .. math.floor(used_perc*100+0.5) .. '%]'
             else
                 -- Parse Swap
                 local name, total, used, free =
@@ -460,11 +463,6 @@ function mem_widget:update_widget(widget, stdout, stderr)
                 local buff_cache_perc = 0
                 local free_perc = 1 - used_perc
 
-                -- show_warning(used_perc)
-                -- show_warning(buff_cache_perc)
-                -- show_warning(free_perc)
-                -- show_warning(used_perc+buff_cache_perc+free_perc)
-
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar']:set_ratio(1, used_perc)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar']:set_ratio(2, buff_cache_perc)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar']:set_ratio(3, free_perc)
@@ -472,7 +470,7 @@ function mem_widget:update_widget(widget, stdout, stderr)
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['cache'].markup = 'Buff/Cache [' .. math.floor(buff_cache_perc*100+0.5) .. '%]'
                 self.mem_info_widget[self.mem_labels[mem_num]]['bar_text']['used'].markup = 'Used [' .. math.floor(used_perc*100+0.5) .. '%]'
                 self.mem_info_widget[self.mem_labels[mem_num]]['perc'].markup =
-                    'Available:\t' .. free .. 'M / ' .. total .. 'M [' .. math.floor((free_perc+buff_cache_perc)*100+0.5) .. '%]'
+                    used .. 'M / ' .. total .. 'M [' .. math.floor(used_perc*100+0.5) .. '%]'
             end
 
             mem_num = mem_num + 1

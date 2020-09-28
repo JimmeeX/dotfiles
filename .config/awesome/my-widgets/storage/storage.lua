@@ -131,8 +131,8 @@ function storage_widget:create_widget(args)
         visible = false,
         shape = gears.shape.rounded_rect,
         border_color = beautiful.bg_normal,
-        minimum_width = 200,
-        maximum_width = 400,
+        minimum_width = 350,
+        maximum_width = 350,
         offset = { y = 5 },
         widget = {
             {
@@ -144,18 +144,11 @@ function storage_widget:create_widget(args)
         }
     }
 
-    self.widget:buttons(
-        awful.util.table.join(
-            awful.button({}, 1, function()
-                if self.widget_popup.visible then
-                    self.widget_popup.visible = not self.widget_popup.visible
-                else
-                    self.widget_popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end)
-        )
-)
-
+    self.widget:connect_signal("mouse::enter", function(c)
+        self.widget_popup:move_next_to(mouse.current_widget_geometry)
+        self.widget_popup.visible = true
+    end)
+    self.widget:connect_signal("mouse::leave", function(c) self.widget_popup.visible = false end)
 end
 
 function storage_widget:create_popupsection(section_title, section_content)
@@ -294,6 +287,7 @@ function storage_widget:create_drivebarwidget(name_info, value, perc_info)
             expand = true,
             layout = wibox.layout.grid
         },
+        top    = 5,
         bottom = 10,
         widget = wibox.container.margin,
         -- set_bar = function(self, new_bar_value)

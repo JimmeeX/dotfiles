@@ -269,17 +269,11 @@ function gpu_widget:create_widget_display(args)
         widget = wibox.container.margin
     }
 
-    self.widget:buttons(
-        awful.util.table.join(
-            awful.button({}, 1, function()
-                if self.widget_popup.visible then
-                    self.widget_popup.visible = not self.widget_popup.visible
-                else
-                    self.widget_popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end)
-        )
-    )
+    self.widget:connect_signal("mouse::enter", function(c)
+        self.widget_popup:move_next_to(mouse.current_widget_geometry)
+        self.widget_popup.visible = true
+    end)
+    self.widget:connect_signal("mouse::leave", function(c) self.widget_popup.visible = false end)
 end
 
 function gpu_widget:create_widget_gpu_subsection()
@@ -301,11 +295,9 @@ function gpu_widget:create_widget_graph_subsection()
     -- Top -> GPU Utilisation
     -- Bottom -> Memory
 
-    local gpu_util_hist_widget = wibox.widget {
-        --     local network_history_up = wibox.widget {
-        max_value = self.graph_max + self.graph_max*self.graph_padding, -- 40 Mb/s
+    self.gpu_graph_widget['util'] = wibox.widget {
+        max_value = self.graph_max + self.graph_max*self.graph_padding,
         background_color = beautiful.bg_focus,
-        -- forced_width = 100,
         forced_height = 50,
         step_width = 2,
         step_spacing = 1.5,
@@ -313,10 +305,8 @@ function gpu_widget:create_widget_graph_subsection()
         widget = wibox.widget.graph
     }
 
-    local gpu_mem_hist_widget = wibox.widget {
-        --     local network_history_up = wibox.widget {
-        max_value = self.graph_max + self.graph_max*self.graph_padding, -- 40 Mb/s
-        -- background_color = beautiful.bg_normal,
+    self.gpu_graph_widget['mem'] = wibox.widget {
+        max_value = self.graph_max + self.graph_max*self.graph_padding,
         background_color = beautiful.bg_focus,
         -- forced_width = 100,
         forced_height = 50,
@@ -326,12 +316,18 @@ function gpu_widget:create_widget_graph_subsection()
         widget = wibox.widget.graph
     }
 
+    self.gpu_graph_widget['subtext'] = wibox.widget {
+        align = 'left',
+        font = beautiful.font_small,
+        widget = wibox.widget.textbox
+    }
+
     local gpu_graph_layout = wibox.widget {
         {
             {
                 {
                     -- Mirrored so graph starts on right
-                    gpu_util_hist_widget,
+                    self.gpu_graph_widget['util'],
                     reflection = { horizontal = true },
                     widget = wibox.container.mirror
                 },
@@ -342,7 +338,7 @@ function gpu_widget:create_widget_graph_subsection()
             {
                 {
                     -- Mirrored so graph starts on right and is facing downwards
-                    gpu_mem_hist_widget,
+                    self.gpu_graph_widget['mem'],
                     direction = 'south',
                     widget = wibox.container.rotate
                 },
@@ -356,10 +352,17 @@ function gpu_widget:create_widget_graph_subsection()
         widget = wibox.container.background
     }
 
-    self.gpu_graph_widget['util'] = gpu_util_hist_widget
-    self.gpu_graph_widget['mem'] = gpu_mem_hist_widget
+    return wibox.widget {
+        gpu_graph_layout,
+        {
+            self.gpu_graph_widget['subtext'],
+            top = 5,
+            widget = wibox.container.margin
+        },
+        layout = wibox.layout.fixed.vertical
+    }
 
-    return gpu_graph_layout
+    -- return gpu_graph_layout
 end
 
 function gpu_widget:create_widget_process_subsection()
@@ -457,6 +460,9 @@ function gpu_widget:update_widget(widget, stdout, stderr)
             -- Update Graph
             self.gpu_graph_widget['util']:add_value(gpu_util/100 + self.graph_max*self.graph_padding)
             self.gpu_graph_widget['mem']:add_value(mem_used_perc + self.graph_max*self.graph_padding)
+            self.gpu_graph_widget['subtext'].markup =
+                'GPU Utilisation:\t' .. gpu_util .. '%\n' ..
+                'Memeory Used:\t\t' .. mem_used .. 'MiB / ' .. mem_total .. 'MiB'
         else
             -- Handle Processes
             local gpu_id, pid, cg_type, fb, command =

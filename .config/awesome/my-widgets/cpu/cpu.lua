@@ -162,7 +162,7 @@ function cpu_widget:init(args)
 
     -- Widget References
     self.widget_displays = {}       -- Reference to Progress Bars
-    self.cpu_graph_widget = nil     -- Reference to popup graph
+    self.cpu_graph_widget = {}      -- Reference to popup graph
     self.cpu_processes_widget = {}  -- Reference to popup processes
 
     self:fetch_data(args)
@@ -170,7 +170,7 @@ function cpu_widget:init(args)
     self:create_widget_popup(args)
     self:create_widget_display(args)
 
-    awful.widget.watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo '%p|%c|%C' --sort=-%cpu | head -11 | tail -n +2"]], self.update_rate, function (widget, stdout, stderr) self:update_widget(widget, stdout, stderr) end, self.widget)
+    awful.widget.watch([[bash -c "lscpu | sed -nr '/CPU MHz/ s/.*:\s*(.*)/\1/p'; cat /proc/stat | grep '^cpu.' ; ps -eo '%p|%c|%C' --sort=-%cpu | head -11 | tail -n +2"]], self.update_rate, function (widget, stdout, stderr) self:update_widget(widget, stdout, stderr) end, self.widget)
 end
 
 function cpu_widget:fetch_data(args)
@@ -182,10 +182,7 @@ function cpu_widget:fetch_data(args)
 end
 
 function cpu_widget:create_widget_popup(args)
-    local graph_container, cpu_graph_widget = self:create_widget_graph_subsection()
-    self.cpu_graph_widget = cpu_graph_widget
-
-    self.widget_popup = awful.popup{
+    self.widget_popup = awful.popup {
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
@@ -196,7 +193,7 @@ function cpu_widget:create_widget_popup(args)
         widget = {
             {
                 create_popupsection('CPU', self:create_widget_cpu_subsection()),
-                create_popupsection('GRAPH', graph_container),
+                create_popupsection('GRAPH', self:create_widget_graph_subsection()),
                 create_popupsection('PROCESSES', self:create_widget_process_subsection()),
                 layout = wibox.layout.fixed.vertical
             },
@@ -245,18 +242,11 @@ function cpu_widget:create_widget_display(args)
         margins = 5,
         widget = wibox.container.margin
     }
-
-    self.widget:buttons(
-        awful.util.table.join(
-            awful.button({}, 1, function()
-                if self.widget_popup.visible then
-                    self.widget_popup.visible = not self.widget_popup.visible
-                else
-                    self.widget_popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end)
-        )
-    )
+    self.widget:connect_signal("mouse::enter", function(c)
+        self.widget_popup:move_next_to(mouse.current_widget_geometry)
+        self.widget_popup.visible = true
+    end)
+    self.widget:connect_signal("mouse::leave", function(c) self.widget_popup.visible = false end)
 end
 
 function cpu_widget:create_widget_cpu_subsection()
@@ -278,13 +268,66 @@ function cpu_widget:create_widget_cpu_subsection()
 end
 
 function cpu_widget:create_widget_graph_subsection()
+    -- Create Text | Progressbar combo
+    local function create_cpu_bar(label, value)
+        local cpu_bar_components = {}
+
+        local progress_label = wibox.widget {
+            markup = label,
+            font = beautiful.font_small,
+            widget = wibox.widget.textbox
+        }
+
+        local progress_widget = wibox.widget {
+            max_value     = 100,
+            value         = value,
+            color         = {type="linear", from = {0, 0}, to = {120, 0}, stops = { {0, "#46BDFF"}, {1.0, '#FF407B'} } },
+            forced_height = 5,
+            background_color = '#2C2F5D',
+            widget        = wibox.widget.progressbar,
+        }
+
+        local cpu_bar_layout = wibox.widget {
+            progress_label,
+            {
+                progress_widget,
+                bg = beautiful.bg_normal,
+                widget = wibox.container.background
+            },
+            layout = wibox.layout.ratio.horizontal
+        }
+        cpu_bar_layout:set_ratio(1, 0.25)
+        cpu_bar_layout:set_ratio(2, 0.75)
+
+        cpu_bar_components['label'] = progress_label
+        cpu_bar_components['bar'] = progress_widget
+        cpu_bar_components['layout'] = cpu_bar_layout
+
+        return cpu_bar_layout, cpu_bar_components
+    end
+
+    self.cpu_graph_widget['cpus'] = wibox.widget {
+        homogeneous = true,
+        expand = true,
+        spacing = 5,
+        min_cols_size = 10,
+        min_rows_size = 10,
+        layout = wibox.layout.grid
+    }
+    -- 1..13
+    for i = 1, self.cpu_info['num_cpu'] do
+        local row = (i+1) // 2
+        local col = ((i+1) %  2) + 1
+
+        local cpu_bar, cpu_bar_components = create_cpu_bar()
+        self.cpu_graph_widget['cpu_bar' .. i] = cpu_bar_components
+        self.cpu_graph_widget['cpus']:add_widget_at(cpu_bar, row, col, 1, 1)
+    end
+
     -- Total Cpu
-    local cpu_graph_widget = wibox.widget {
-        --     local network_history_up = wibox.widget {
-        max_value = self.graph_max + self.graph_max*self.graph_padding, -- 40 Mb/s
-        -- background_color = beautiful.bg_normal,
+    self.cpu_graph_widget['graph'] = wibox.widget {
+        max_value = self.graph_max + self.graph_max*self.graph_padding,
         background_color = beautiful.bg_focus,
-        -- forced_width = 100,
         forced_height = 50,
         step_width = 2,
         step_spacing = 1.5,
@@ -292,16 +335,35 @@ function cpu_widget:create_widget_graph_subsection()
         widget = wibox.widget.graph
     }
 
+    self.cpu_graph_widget['subtext'] = wibox.widget {
+        align = 'left',
+        font = beautiful.font_small,
+        widget = wibox.widget.textbox
+    }
+
     return wibox.widget {
         {
-            -- Mirrored so graph starts on right
-            cpu_graph_widget,
-            reflection = { horizontal = true },
-            widget = wibox.container.mirror
+            {
+                -- Mirrored so graph starts on right
+                self.cpu_graph_widget['graph'],
+                reflection = { horizontal = true },
+                widget = wibox.container.mirror
+            },
+            bg = beautiful.bg_focus,
+            widget = wibox.container.background
         },
-        bg = beautiful.bg_focus,
-        widget = wibox.container.background
-    }, cpu_graph_widget
+        {
+            self.cpu_graph_widget['subtext'],
+            top = 5,
+            widget = wibox.container.margin
+        },
+        {
+            self.cpu_graph_widget['cpus'],
+            top = 5,
+            widget = wibox.container.margin
+        },
+        layout = wibox.layout.fixed.vertical
+    }
 end
 
 function cpu_widget:create_widget_process_subsection()
@@ -364,11 +426,17 @@ function cpu_widget:create_widget_process_subsection()
 end
 
 function cpu_widget:update_widget(widget, stdout, stderr)
+    local parse_cpu_mhz = false
     local cpu_num = 1
     local process_num = 1
 
+    local cpu_mhz = nil
+
     for line in stdout:gmatch("[^\r\n]+") do
-        if starts_with(line, 'cpu') then
+        if parse_cpu_mhz == false then
+            cpu_mhz = tonumber(line)
+            parse_cpu_mhz = true
+        elseif starts_with(line, 'cpu') then
 
             if self.cpu_usage[cpu_num] == nil then self.cpu_usage[cpu_num] = {} end
 
@@ -388,7 +456,13 @@ function cpu_widget:update_widget(widget, stdout, stderr)
             -- Update Graph
             if cpu_num == 1 then
                 -- show_warning(diff_usage)
-                self.cpu_graph_widget:add_value(diff_usage + self.graph_max*self.graph_padding)
+                self.cpu_graph_widget['graph']:add_value(diff_usage + self.graph_max*self.graph_padding)
+                self.cpu_graph_widget['subtext'].markup =
+                    'Clock Speed:\t' .. cpu_mhz .. ' MHz\n' ..
+                    'Usage:\t\t' .. math.floor(diff_usage*1000+0.5)/1000 .. '%'
+            else
+                self.cpu_graph_widget['cpu_bar' .. cpu_num-1]['label'].markup = 'CPU' .. cpu_num-1
+                self.cpu_graph_widget['cpu_bar' .. cpu_num-1]['bar'].value = diff_usage
             end
 
             -- Update Display Widgets
