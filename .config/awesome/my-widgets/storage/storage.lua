@@ -108,10 +108,22 @@ function storage_widget:create_widget(args)
 
     self.widget_bg = wibox.widget {
         {
-            self.primary_progress,
-            forced_width  = 10,
-            direction     = 'east',
-            layout        = wibox.container.rotate
+            {
+                {
+                    markup = 'SSD',
+                    font = beautiful.font_msmall,
+                    widget = wibox.widget.textbox
+                },
+                direction     = 'east',
+                layout        = wibox.container.rotate
+            },
+            {
+                self.primary_progress,
+                forced_width  = 10,
+                direction     = 'east',
+                layout        = wibox.container.rotate
+            },
+            layout = wibox.layout.fixed.horizontal
         },
         bg = beautiful.bg_normal,
         widget = wibox.container.background
@@ -290,12 +302,6 @@ function storage_widget:create_drivebarwidget(name_info, value, perc_info)
         top    = 5,
         bottom = 10,
         widget = wibox.container.margin,
-        -- set_bar = function(self, new_bar_value)
-        --     self:get_children_by_id(name .. '_bar')[1]:set_value(new_bar_value)
-        -- end,
-        -- set_perc = function(self, new_perc_value)
-        --     self:get_children_by_id(name .. '_perc')[1]:set_text(tostring(new_perc_value))
-        -- end
     }, partition_bar_widget, partition_perc_widget
 end
 

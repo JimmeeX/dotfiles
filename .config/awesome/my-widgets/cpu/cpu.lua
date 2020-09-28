@@ -226,6 +226,15 @@ function cpu_widget:create_widget_display(args)
     end
 
     local widget_layout = wibox.widget {
+        {
+            {
+                markup = 'CPU',
+                font = beautiful.font_msmall,
+                widget = wibox.widget.textbox
+            },
+            direction     = 'east',
+            layout        = wibox.container.rotate
+        },
         layout = wibox.layout.fixed.horizontal
     }
 

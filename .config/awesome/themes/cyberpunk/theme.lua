@@ -13,6 +13,7 @@ local theme = {}
 
 theme.font          = "MesloLGS NF 12"
 theme.font_small    = "MesloLGS NF 9"
+theme.font_msmall   = "MesloLGS NF 8"
 theme.font_vsmall   = "MesloLGS NF 7"
 
 theme.progress_vertbar = {type="linear", from = {0, 0}, to = {20, 0}, stops = { {0, "#46BDFF"}, {1.0, '#FF407B'} } }

@@ -263,6 +263,29 @@ function gpu_widget:create_widget_display(args)
         widget = wibox.container.background
     }
 
+    self.widget_bg = wibox.widget {
+        {
+            {
+                {
+                    markup = 'GPU',
+                    font = beautiful.font_msmall,
+                    widget = wibox.widget.textbox
+                },
+                direction     = 'east',
+                layout        = wibox.container.rotate
+            },
+            {
+                self.widget_display_bar,
+                forced_width  = 10,
+                direction     = 'east',
+                layout        = wibox.container.rotate
+            },
+            layout = wibox.layout.fixed.horizontal
+        },
+        bg = beautiful.bg_normal,
+        widget = wibox.container.background
+    }
+
     self.widget = wibox.widget {
         self.widget_bg,
         margins = 5,

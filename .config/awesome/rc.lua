@@ -118,9 +118,6 @@ local mymainmenu = awful.menu({
             }
     })
 
-local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
-
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -131,7 +128,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibar
 
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+local clock_widget = wibox.widget.textclock(" %a %b %d %l:%M%P ")
 local net_widget    = require("my-widgets.net.net")({})
 local mem_widget    = require("my-widgets.mem.mem")({})
 local cpu_widget    = require("my-widgets.cpu.cpu")({})
@@ -239,7 +236,6 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
@@ -250,19 +246,11 @@ awful.screen.connect_for_each_screen(function(s)
             net_widget.widget,
             gpu_widget.widget,
             mem_widget.widget,
-            -- cpu_label,
-            -- cpu_widget({
-            --     width=50,
-            --     step_spacing=0,
-            --     color='#FF16B0',
-            --     enable_kill_button=true
-            -- }),
             cpu_widget.widget,
             storage_widget.widget,
             volume_cfg.widget,
-            -- mykeyboardlayout,
             -- wibox.widget.systray(),
-            mytextclock,
+            clock_widget,
             s.mylayoutbox,
         },
     }
