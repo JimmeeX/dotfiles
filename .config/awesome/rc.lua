@@ -383,7 +383,13 @@ globalkeys = gears.table.join(
             awful.spawn.with_shell("/usr/bin/amixer set Master toggle")
             volume_cfg:toggle()
         end
-    )
+    ),
+    -- Media Player Control (using playerctl)
+    awful.key({  }, "XF86AudioStop", function() awful.spawn.with_shell("/usr/bin/playerctl --player=playerctld stop") end),
+    awful.key({  }, "XF86AudioPrev", function() awful.spawn.with_shell("/usr/bin/playerctl --player=playerctld previous") end),
+    awful.key({  }, "XF86AudioPlay", function() awful.spawn.with_shell("/usr/bin/playerctl --player=playerctld play-pause") end),
+    awful.key({  }, "XF86AudioNext", function() awful.spawn.with_shell("/usr/bin/playerctl --player=playerctld next") end)
+
 )
 
 clientkeys = gears.table.join(
