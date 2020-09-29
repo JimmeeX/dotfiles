@@ -104,19 +104,19 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-local myawesomemenu = {
-   { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", terminal .. " -e " .. editor .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end },
-}
+-- local myawesomemenu = {
+--    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+--    { "manual", terminal .. " -e man awesome" },
+--    { "edit config", terminal .. " -e " .. editor .. " " .. awesome.conffile },
+--    { "restart", awesome.restart },
+--    { "quit", function() awesome.quit() end },
+-- }
 
-local mymainmenu = awful.menu({
-    items = {{ "awesome", myawesomemenu, beautiful.awesome_icon },
-             { "open terminal", terminal }
-            }
-    })
+-- local mymainmenu = awful.menu({
+--     items = {{ "awesome", myawesomemenu, beautiful.awesome_icon },
+--              { "open terminal", terminal }
+--             }
+--     })
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
@@ -128,7 +128,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibar
 
 -- Create a textclock widget
-local clock_widget = wibox.widget.textclock(" %a %b %d %l:%M%P ")
+local clock_widget = require("my-widgets.clock.clock")
 local net_widget    = require("my-widgets.net.net")({})
 local mem_widget    = require("my-widgets.mem.mem")({})
 local cpu_widget    = require("my-widgets.cpu.cpu")({})
@@ -228,7 +228,7 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = tasklist_buttons
     }
 
-    -- Create the wibox
+    -- Wibar
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
     -- Add widgets to the wibox
@@ -259,7 +259,7 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+    -- awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -287,8 +287,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey, "Shift"   }, "c", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
+    -- awful.key({ modkey, "Shift"   }, "c", function () mymainmenu:show() end,
+    --           {description = "show main menu", group = "awesome"}),
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
@@ -626,7 +626,7 @@ beautiful.useless_gap = 5;
 beautiful.gap_single_client = true;
 
 -- Autostart Apps && Scripts
--- awful.spawn.with_shell("ckb-next --background");
+awful.spawn.with_shell("ckb-next --background");
 awful.spawn.with_shell("picom --config $HOME/.config/picom/picom.conf");
 awful.util.spawn("albert");
 
