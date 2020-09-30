@@ -376,7 +376,16 @@ end
 
 
 function music_widget:update_widget(widget, stdout, stderr)
-    -- show_warning(stdout)
+    if isempty(stdout) then
+        -- Defaults
+        self.widget_display['icon'].image = nil
+        self.widget_display['text'].markup = 'No Music Sources Detected'
+        self.widget_popup_info['album-art']:set_image(IM_DEFAULT_PATH)
+        self.widget_popup_info['info'].markup = 'No Music Sources Detected'
+        self.widget_popup_info['bar'].visible = false
+        self.widget_popup_info['bar-text'].markup = ' '
+        return
+    end
 
     local vals = split(stdout, ';;')
     local trackid = trim(vals[1])
