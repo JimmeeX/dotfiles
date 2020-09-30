@@ -37,6 +37,7 @@ theme.border_normal = "#000000"
 theme.border_focus  = "#FF16B0"
 theme.border_marked = "#91231c"
 
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:

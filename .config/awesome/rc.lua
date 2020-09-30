@@ -128,6 +128,8 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibar
 
 -- Create a textclock widget
+local weather_widget = require("my-widgets.weather.weather")
+
 local clock_widget = require("my-widgets.clock.clock")
 local net_widget    = require("my-widgets.net.net")({})
 local mem_widget    = require("my-widgets.mem.mem")({})
@@ -250,6 +252,16 @@ awful.screen.connect_for_each_screen(function(s)
             storage_widget.widget,
             volume_cfg.widget,
             -- wibox.widget.systray(),
+            weather_widget({
+                api_key='b23de815b27362b3ec6e81ee05523a3c',
+                coordinates = {-33.969550, 151.139690},
+                time_format_12h = true,
+                units = 'metric',
+                both_units_widget = true,
+                font_name = beautiful.font_small,
+                show_hourly_forecast = true,
+                show_daily_forecast = true,
+            }),
             clock_widget,
             s.mylayoutbox,
         },
@@ -632,7 +644,7 @@ beautiful.useless_gap = 5;
 beautiful.gap_single_client = true;
 
 -- Autostart Apps && Scripts
-awful.spawn.with_shell("ckb-next --background");
+-- awful.spawn.with_shell("ckb-next --background");
 awful.spawn.with_shell("picom --config $HOME/.config/picom/picom.conf");
 awful.util.spawn("albert");
 
