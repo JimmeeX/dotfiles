@@ -192,13 +192,13 @@ end
 function net_widget:create_widget_display(args)
     self.widget_display_text['up'] = wibox.widget {
         -- Up Speed Textbox
-        align = 'center',
+        align = 'right',
         font = beautiful.font_msmall,
         widget = wibox.widget.textbox
     }
 
     self.widget_display_text['down'] = wibox.widget {
-        align = 'center',
+        align = 'right',
         font = beautiful.font_msmall,
         widget = wibox.widget.textbox,
     }
@@ -207,6 +207,7 @@ function net_widget:create_widget_display(args)
         {
             self.widget_display_text['up'],
             self.widget_display_text['down'],
+            forced_width = 45,
             expand = true,
             homogeneous = true,
             layout = wibox.layout.grid.vertical,

@@ -127,21 +127,16 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 
--- Create a textclock widget
-local weather_widget = require("my-widgets.weather.weather")
+local music_widget  = require("my-widgets.music.music")({})
 
-local clock_widget = require("my-widgets.clock.clock")
 local net_widget    = require("my-widgets.net.net")({})
+local gpu_widget    = require("my-widgets.gpu.gpu")({})
 local mem_widget    = require("my-widgets.mem.mem")({})
 local cpu_widget    = require("my-widgets.cpu.cpu")({})
-local gpu_widget    = require("my-widgets.gpu.gpu")({})
-
--- Volume Widget
-local volume_control = require("my-widgets.volume.volume")
-local volume_cfg = volume_control({})
-
--- Storage Widget
 local storage_widget = require("my-widgets.storage.storage")({})
+local volume_widget = require("my-widgets.volume.volume")({})
+local weather_widget = require("my-widgets.weather.weather")
+local clock_widget = require("my-widgets.clock.clock")
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -245,12 +240,13 @@ awful.screen.connect_for_each_screen(function(s)
         -- s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            music_widget.widget,
             net_widget.widget,
             gpu_widget.widget,
             mem_widget.widget,
             cpu_widget.widget,
             storage_widget.widget,
-            volume_cfg.widget,
+            volume_widget.widget,
             -- wibox.widget.systray(),
             weather_widget({
                 api_key='b23de815b27362b3ec6e81ee05523a3c',
@@ -381,19 +377,19 @@ globalkeys = gears.table.join(
     awful.key({  }, "XF86AudioRaiseVolume",
         function()
             awful.spawn.with_shell("/usr/bin/amixer set Master 5%+")
-            volume_cfg:up()
+            volume_widget:up()
         end
     ),
     awful.key({  }, "XF86AudioLowerVolume",
         function()
             awful.spawn.with_shell("/usr/bin/amixer set Master 5%-")
-            volume_cfg:down()
+            volume_widget:down()
         end
     ),
     awful.key({  }, "XF86AudioMute",
         function()
             awful.spawn.with_shell("/usr/bin/amixer set Master toggle")
-            volume_cfg:toggle()
+            volume_widget:toggle()
         end
     ),
     -- Media Player Control (using playerctl)
@@ -644,7 +640,7 @@ beautiful.useless_gap = 5;
 beautiful.gap_single_client = true;
 
 -- Autostart Apps && Scripts
--- awful.spawn.with_shell("ckb-next --background");
+awful.spawn.with_shell("ckb-next --background");
 awful.spawn.with_shell("picom --config $HOME/.config/picom/picom.conf");
 awful.util.spawn("albert");
 
