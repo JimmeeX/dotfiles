@@ -21,7 +21,7 @@ Joining the Arch Linux userbase for the first time.
 - Text Editor: VS Code ([1984 color theme](https://github.com/juanmnl/vs-1984))
 - Application Launcher: [Albert](https://albertlauncher.github.io/) (config provided)
 - Music Player: [Spotify](https://aur.archlinux.org/packages/spotify/) customised with spicetify (config provided)
-- Widgets: Music, Net, GPU, Memory, CPU, Storage, Weather. More details here.
+- Widgets: Music, Net, GPU, Memory, CPU, Storage, Weather. More details [here](https://github.com/JimmeeX/dotfiles/tree/master/.config/awesome/my-widgets).
 
 ## Inspirations
 - [Kurolox](https://www.reddit.com/r/unixporn/comments/ho05vh/bspwm_space/) (Pretty much most things)
