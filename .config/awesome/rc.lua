@@ -255,6 +255,7 @@ awful.screen.connect_for_each_screen(function(s)
                 units = 'metric',
                 both_units_widget = true,
                 font_name = beautiful.font_small,
+                icons = 'cyberpunk',
                 show_hourly_forecast = true,
                 show_daily_forecast = true,
             }),

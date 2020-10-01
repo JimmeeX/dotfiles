@@ -8,6 +8,7 @@ local dpi = xresources.apply_dpi
 
 local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
+local LAYOUT_DIR = os.getenv("HOME") .. '/.config/awesome/themes/cyberpunk/layouts/'
 
 local theme = {}
 
@@ -27,7 +28,7 @@ theme.bg_minimize   = "#444444"
 theme.bg_systray    = theme.bg_normal
 
 theme.fg_normal     = "#46BDFF"
-theme.fg_focus      = "#ffffff"
+theme.fg_focus      = "#FF16B0"
 theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
@@ -106,24 +107,24 @@ theme.titlebar_maximized_button_normal_active = themes_path.."default/titlebar/m
 theme.titlebar_maximized_button_focus_active  = themes_path.."default/titlebar/maximized_focus_active.png"
 
 theme.wallpaper = themes_path.."default/background.png"
-
 -- You can use your own layout icons like this:
-theme.layout_fairh = themes_path.."default/layouts/fairhw.png"
-theme.layout_fairv = themes_path.."default/layouts/fairvw.png"
-theme.layout_floating  = themes_path.."default/layouts/floatingw.png"
-theme.layout_magnifier = themes_path.."default/layouts/magnifierw.png"
-theme.layout_max = themes_path.."default/layouts/maxw.png"
-theme.layout_fullscreen = themes_path.."default/layouts/fullscreenw.png"
-theme.layout_tilebottom = themes_path.."default/layouts/tilebottomw.png"
-theme.layout_tileleft   = themes_path.."default/layouts/tileleftw.png"
-theme.layout_tile = themes_path.."default/layouts/tilew.png"
-theme.layout_tiletop = themes_path.."default/layouts/tiletopw.png"
-theme.layout_spiral  = themes_path.."default/layouts/spiralw.png"
-theme.layout_dwindle = themes_path.."default/layouts/dwindlew.png"
-theme.layout_cornernw = themes_path.."default/layouts/cornernww.png"
-theme.layout_cornerne = themes_path.."default/layouts/cornernew.png"
-theme.layout_cornersw = themes_path.."default/layouts/cornersww.png"
-theme.layout_cornerse = themes_path.."default/layouts/cornersew.png"
+
+theme.layout_fairh      = LAYOUT_DIR .. "fairhw.png"
+theme.layout_fairv      = LAYOUT_DIR .. "fairvc.png"
+theme.layout_floating   = LAYOUT_DIR .. "floatingc.png"
+theme.layout_magnifier  = LAYOUT_DIR .. "magnifierw.png"
+theme.layout_max        = LAYOUT_DIR .. "maxw.png"
+theme.layout_fullscreen = LAYOUT_DIR .. "fullscreenw.png"
+theme.layout_tilebottom = LAYOUT_DIR .. "tilebottomw.png"
+theme.layout_tileleft   = LAYOUT_DIR .. "tileleftw.png"
+theme.layout_tile       = LAYOUT_DIR .. "tilew.png"
+theme.layout_tiletop    = LAYOUT_DIR .. "tiletopw.png"
+theme.layout_spiral     = LAYOUT_DIR .. "spiralw.png"
+theme.layout_dwindle    = LAYOUT_DIR .. "dwindlew.png"
+theme.layout_cornernw   = LAYOUT_DIR .. "cornernww.png"
+theme.layout_cornerne   = LAYOUT_DIR .. "cornernew.png"
+theme.layout_cornersw   = LAYOUT_DIR .. "cornersww.png"
+theme.layout_cornerse   = LAYOUT_DIR .. "cornersew.png"
 
 -- Generate Awesome icon:
 theme.awesome_icon = theme_assets.awesome_icon(

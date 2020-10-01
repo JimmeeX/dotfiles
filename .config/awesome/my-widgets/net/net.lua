@@ -143,12 +143,10 @@ local net_widget = class()
 
 function net_widget:init(args)
     self.interface  = 'enp0s31f6'
-    self.ip_address = os.capture([[ifconfig enp0s31f6 | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | head -n 1]])
 
     self.max_up_speed   = 40000000       -- Mb/s
     self.max_down_speed = 100000000      -- Mb/s
 
-    self.prev_time  = os.clock()
     self.prev_up    = os.capture(string.format([[cat /sys/class/net/%s/statistics/tx_bytes]], self.interface))
     self.prev_down  = os.capture(string.format([[cat /sys/class/net/%s/statistics/rx_bytes]], self.interface))
 
@@ -158,11 +156,12 @@ function net_widget:init(args)
 
     -- Widget References
     self.widget_display_text = {}   -- Reference to Progress Bars
+    self.net_info_widget = {}       -- Reference to popup info
     self.net_graph_widget = {}      -- Reference to popup graph
 
     self:create_widget_popup(args)
     self:create_widget_display(args)
-    awful.widget.watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], self.interface), self.update_rate, function (widget, stdout, stderr) self:update_widget(widget, stdout, stderr) end, self.widget)
+    awful.widget.watch(string.format([[bash -c "ifconfig %s | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | head -n 1;cat /sys/class/net/%s/statistics/*_bytes"]], self.interface, self.interface), self.update_rate, function (widget, stdout, stderr) self:update_widget(widget, stdout, stderr) end, self.widget)
 end
 
 function net_widget:create_widget_popup(args)
@@ -227,13 +226,13 @@ function net_widget:create_widget_net_subsection()
     -- Net Details
         -- IP Address
         -- Interface
-    return wibox.widget {
-        markup =
-            "Interface:\t" .. self.interface .. "\n" ..
-            "IP Address:\t" .. self.ip_address,
+
+    self.net_info_widget['text'] = wibox.widget {
         font = beautiful.font_small,
         widget = wibox.widget.textbox,
     }
+
+    return self.net_info_widget['text']
 end
 
 function net_widget:create_widget_graph_subsection()
@@ -306,26 +305,22 @@ function net_widget:create_widget_graph_subsection()
 end
 
 function net_widget:update_widget(widget, stdout, stderr)
-    local cur_time  = os.clock()
-    local cur_down  = 0
-    local cur_up    = 0
-
     local cur_vals = split(stdout, '\r\n')
+    local ip_address = cur_vals[1]
+    local cur_down = cur_vals[2]
+    local cur_up = cur_vals[3]
 
-    for i, v in ipairs(cur_vals) do
-        if i%2 == 1 then cur_down = cur_down + cur_vals[i] end
-        if i%2 == 0 then cur_up = cur_up + cur_vals[i] end
-    end
-
-    local time_diff     = (cur_time - self.prev_time) * 10 -- seconds
     local speed_up      = (cur_up - self.prev_up) / self.update_rate
     local speed_down    = (cur_down - self.prev_down) / self.update_rate
-
-    -- show_warning(time_diff)
 
     -- Update Display Widget
     self.widget_display_text['up'].markup = convert_to_h(speed_up)
     self.widget_display_text['down'].markup = convert_to_h(speed_down)
+
+    -- Update Popup Info
+    self.net_info_widget['text'].markup =
+        "Interface:\t" .. self.interface .. "\n" ..
+        "IP Address:\t" .. ip_address
 
     -- Update Popup Graph
     self.net_graph_widget['up']:add_value(speed_up*8 / self.max_up_speed + self.graph_max*self.graph_padding)
@@ -334,7 +329,6 @@ function net_widget:update_widget(widget, stdout, stderr)
         'Up:\t' .. convert_to_h(speed_up) .. '\n' ..
         'Down:\t' .. convert_to_h(speed_down)
 
-    self.prev_time  = cur_time
     self.prev_up    = cur_up
     self.prev_down  = cur_down
 end
