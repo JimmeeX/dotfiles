@@ -316,7 +316,7 @@ local function worker(args)
 
     local hourly_forecast_graph = wibox.widget {
         step_width = 12,
-        color = '#EBCB8B',
+        color = beautiful.fg_normal,
         background_color = beautiful.bg_normal,
         forced_height = 100,
         forced_width = 300,
@@ -374,19 +374,23 @@ local function worker(args)
             local count = #self
             for i = 0, count do self[i]=nil end
 
-            table.insert(self, wibox.widget{
+            table.insert(self, wibox.widget {
                 {
-                    hourly_forecast_graph,
-                    reflection = {horizontal = true},
-                    widget = wibox.container.mirror
+                    {
+                        hourly_forecast_graph,
+                        reflection = {horizontal = true},
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'bottom',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
                 },
-                {
-                    temp_below,
-                    valign = 'bottom',
-                    widget = wibox.container.place
-                },
-                id = 'graph',
-                layout = wibox.layout.stack
+                bottom = 3,
+                widget = wibox.container.margin
             })
             table.insert(self, hours_below)
         end
