@@ -1,6 +1,6 @@
 # JimmeeX dotfiles
 
-Joining the Arch Linux userbase for the first time.
+Joining the Arch Linux userbase for the first time. Feel free to check out my [Ubuntu desktop customisation](https://github.com/JimmeeX/my_desktop)
 
 ## Gallery
 ![Screenshot showing awesome bar, wallpaper-1, kitty terminal](Pictures/desktop/desktop1-kitty.png)
