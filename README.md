@@ -3,14 +3,14 @@
 Joining the Arch Linux userbase for the first time. Feel free to check out my [Ubuntu desktop customisation](https://github.com/JimmeeX/my_desktop)
 
 ## Gallery
-Apps - Kitty Terminal
 ![Screenshot showing awesome bar, wallpaper-1, kitty terminal](Pictures/desktop/desktop1-kitty.png)
+Apps - Kitty Terminal
 
-Apps - Firefox
 ![Screenshot showing awesome bar, wallpaper-1, firefox](Pictures/desktop/desktop1-firefox.png)
+Apps - Firefox
 
-Apps - Spotify (left), Visual Studio Code (right)
 ![Screenshot showing awesome bar, wallpaper-2, spotify and vscode](Pictures/desktop/desktop2-spotify-code.png)
+Apps - Spotify (left), Visual Studio Code (right)
 
 ## General Details
 - OS: Arch Linux
