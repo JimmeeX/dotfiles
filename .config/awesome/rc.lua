@@ -4,6 +4,8 @@
 local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
 local ipairs, string, os, table, tostring, tonumber, type = ipairs, string, os, table, tostring, tonumber, type
 
+local env           = require("env")   -- Secret Environment Variables
+
 local gears         = require("gears")
 local awful         = require("awful")
                       require("awful.autofocus")
@@ -249,8 +251,8 @@ awful.screen.connect_for_each_screen(function(s)
             volume_widget.widget,
             -- wibox.widget.systray(),
             weather_widget({
-                api_key='b23de815b27362b3ec6e81ee05523a3c',
-                coordinates = {-33.969550, 151.139690},
+                api_key=env.OPEN_WEATHER_API_KEY,
+                coordinates = env.OPEN_WEATHER_LOCATION,
                 time_format_12h = true,
                 units = 'metric',
                 both_units_widget = true,

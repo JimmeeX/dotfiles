@@ -4,10 +4,15 @@
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "MesloLGS NF",
-    "terminal.integrated.fontSize": 16,
+    "terminal.integrated.fontSize": 12,
     "workbench.colorTheme": "1984",
     "workbench.iconTheme": "material-icon-theme",
     "sync.gist": "718b418b21a1f54cda758d35a1902894",
     "explorer.confirmDelete": false,
     "latex-workshop.view.pdf.viewer": "tab",
+    "explorer.confirmDragAndDrop": false,
+    "python.dataScience.askForKernelRestart": false,
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }

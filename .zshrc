@@ -113,6 +113,9 @@ alias ll='exa -l --color=always --group-directories-first'  # long format
 alias lt='exa -aT --color=always --group-directories-first' # tree listing
 alias l.='exa -al | egrep "^\."'
 
+# Changing "cp" to "rsync"
+alias cp='rsync -zvh --progress'
+alias cpr='rsync -zrvh --progress'
 
 # Other
 alias dotfiles="/usr/bin/git --git-dir=$HOME/github/.dotfiles/ --work-tree=$HOME"
