@@ -15,4 +15,6 @@
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "code-runner.runInTerminal": true,
+    "python.dataScience.alwaysTrustNotebooks": true,
 }

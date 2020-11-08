@@ -210,6 +210,7 @@ local function fix_image_url(source, art_url)
     if source == 'Spotify' then
         -- Fix Url https://i.scdn.co/image/{art-address} instead of https://open.spotify.com/image/{art-address}
         local art_id = art_url:match("^https://open%.spotify%.com/image/(.-)$")
+        if isempty(art_id) then return nil end
         art_url = 'https://i.scdn.co/image/' .. art_id
     end
 
